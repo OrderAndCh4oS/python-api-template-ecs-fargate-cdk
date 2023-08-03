@@ -5,5 +5,5 @@ app = FastAPI()
 
 
 @app.get("/")
-def analyse_game():
+def health_check():
     return {"message": "ok"}

@@ -9,22 +9,22 @@ const parameters = [
     {
         Name: '/api/certificateDomainName',
         Value: process.env.CERTIFICATE_DOMAIN_NAME,
-        Type: 'SecureString'
+        Type: 'String'
     },
     {
         Name: '/api/hostedZoneId',
         Value: process.env.HOSTED_ZONE_ID,
-        Type: 'SecureString'
+        Type: 'String'
     },
     {
         Name: '/api/hostedZoneName',
         Value: process.env.HOSTED_ZONE_NAME,
-        Type: 'SecureString'
+        Type: 'String'
     },
     {
         Name: '/api/aRecordName',
         Value: process.env.A_RECORD_NAME,
-        Type: 'SecureString'
+        Type: 'String'
     }
 ];
 
@@ -33,7 +33,7 @@ console.log(parameters);
 async function createParameters(parameters) {
     for (const param of parameters) {
         try {
-            const command = new PutParameterCommand(param);
+            const command = new PutParameterCommand({...param, Overwrite: true});
             await ssmClient.send(command);
             console.log(`Parameter created successfully: ${param.Name}`);
         } catch (err) {
