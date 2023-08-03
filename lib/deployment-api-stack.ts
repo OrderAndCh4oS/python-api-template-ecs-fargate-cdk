@@ -58,7 +58,6 @@ export class DeploymentApiStack extends cdk.Stack {
       containerInsights: true
     });
 
-
     const image = ContainerImage.fromRegistry('914698808609.dkr.ecr.eu-west-1.amazonaws.com/api-pipeline-images:latest');
 
     const fargate = new ApplicationLoadBalancedFargateService(this, 'ApiAlbFargate', {
