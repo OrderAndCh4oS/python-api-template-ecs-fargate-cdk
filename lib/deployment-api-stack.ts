@@ -9,6 +9,7 @@ import {Cluster, ContainerImage, DeploymentControllerType, LogDrivers} from "aws
 import {SubnetType, Vpc} from 'aws-cdk-lib/aws-ec2';
 import {RetentionDays} from 'aws-cdk-lib/aws-logs';
 import {StringParameter} from "aws-cdk-lib/aws-ssm";
+import {Effect, PolicyStatement} from "aws-cdk-lib/aws-iam";
 
 export type ApiStackProps = {
     certificateDomainNameParameterName: string;
@@ -58,6 +59,21 @@ export class DeploymentApiStack extends cdk.Stack {
 
         const image = ContainerImage.fromRegistry('914698808609.dkr.ecr.eu-west-1.amazonaws.com/api-pipeline-images:latest');
 
+        const ecrPolicyStatement = new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+                'ecr:GetAuthorizationToken',
+                'ecr:BatchCheckLayerAvailability',
+                'ecr:GetDownloadUrlForLayer',
+                'ecr:GetRepositoryPolicy',
+                'ecr:DescribeRepositories',
+                'ecr:ListImages',
+                'ecr:DescribeImages',
+                'ecr:BatchGetImage',
+            ],
+            resources: ['*'],
+        });
+
         const fargate = new ApplicationLoadBalancedFargateService(this, 'ApiAlbFargate', {
             cluster,
             taskImageOptions: {
@@ -77,6 +93,8 @@ export class DeploymentApiStack extends cdk.Stack {
             certificate,
             redirectHTTP: true,
         });
+
+        fargate.taskDefinition.addToExecutionRolePolicy(ecrPolicyStatement); // Attach the policy to the task execution role
 
         new ARecord(this, "ApiHttpsFargateAlbARecord", {
             zone: publicZone,
