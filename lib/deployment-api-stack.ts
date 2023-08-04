@@ -62,14 +62,7 @@ export class DeploymentApiStack extends cdk.Stack {
         const ecrPolicyStatement = new PolicyStatement({
             effect: Effect.ALLOW,
             actions: [
-                'ecr:GetAuthorizationToken',
-                'ecr:BatchCheckLayerAvailability',
-                'ecr:GetDownloadUrlForLayer',
-                'ecr:GetRepositoryPolicy',
-                'ecr:DescribeRepositories',
-                'ecr:ListImages',
-                'ecr:DescribeImages',
-                'ecr:BatchGetImage',
+                'ecr:*',
             ],
             resources: ['*'],
         });
